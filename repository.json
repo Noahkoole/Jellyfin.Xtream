@@ -8,6 +8,14 @@
     "owner": "pietermn",
     "versions": [
       {
+        "changelog": "- Add opt-in series title deduplication for the Xtream channel and STRM export.\\n- Skip duplicate series before episode details are fetched during export.\\n- Reconcile stale plugin-managed STRM files after a successful deduplicated export.",
+        "checksum": "8180fc0a5b708f11b33429ced84dac26",
+        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.3/jelly-xtream_0.9.3.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-07-25T23:51:11Z",
+        "version": "0.9.3.0"
+      },
+      {
         "changelog": "Hotfix release for Live TV playback through providers that redirect stream URLs to public CDN hosts.\n\nChanges:\n- Allow Live TV stream/restream requests to follow public cross-origin provider redirects.\n- Keep Xtream API/metadata requests on strict same-origin redirect handling.\n- Reject redirects to private/local/metadata endpoints even for stream playback.\n- Bump plugin metadata to 0.9.2.0.\n\nVerification:\n- dotnet test Jellyfin.Xtream.sln -c Release: 142 passed.\n- Deployed build was verified on Jellyfin with Live TV playback-info returning HTTP 200 and no new origin errors.",
         "checksum": "a0345ff2962849b2758c6b48d4dee282",
         "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.2/jelly-xtream_0.9.2.0.zip",
