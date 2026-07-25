@@ -285,6 +285,11 @@ public class SeriesChannel(
     {
         IEnumerable<Series> series = await Plugin.Instance.StreamService.GetSeries(categoryId, cancellationToken).ConfigureAwait(false);
         NameNormalizationSnapshot names = nameNormalizer.CreateSnapshot();
+        if (Plugin.Instance.Configuration.IsSeriesStrmExportDeduplicationEnabled)
+        {
+            series = SeriesTitleDeduplicator.Deduplicate(series, names);
+        }
+
         List<ChannelItemInfo> items = new(series.Select(item => CreateChannelItemInfo(item, names)));
         return new()
         {

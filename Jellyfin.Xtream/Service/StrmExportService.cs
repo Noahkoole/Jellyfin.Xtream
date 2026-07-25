@@ -279,6 +279,18 @@ public class StrmExportService(
             .Select(group => group.OrderBy(series => series.Name, StringComparer.Ordinal).First())
             .OrderBy(series => series.SeriesId)
             .ToList();
+        if (snapshot.IsSeriesTitleDeduplicationEnabled)
+        {
+            int duplicateCount = seriesToExport.Count;
+            seriesToExport = SeriesTitleDeduplicator.Deduplicate(seriesToExport, namingSnapshot);
+            duplicateCount -= seriesToExport.Count;
+            if (duplicateCount > 0)
+            {
+                logger.LogInformation(
+                    "Skipped {Count} duplicate series before fetching episode details for STRM export.",
+                    duplicateCount);
+            }
+        }
 
         int seriesProcessed = 0;
         foreach (Series series in seriesToExport)
@@ -473,6 +485,7 @@ public class StrmExportService(
             string publicServerUrl,
             string? vodRoot,
             string? seriesRoot,
+            bool isSeriesTitleDeduplicationEnabled,
             IReadOnlyList<CategorySelection> vodSelections,
             IReadOnlyList<CategorySelection> seriesSelections)
         {
@@ -481,6 +494,7 @@ public class StrmExportService(
             PublicServerUrl = publicServerUrl;
             VodRoot = vodRoot;
             SeriesRoot = seriesRoot;
+            IsSeriesTitleDeduplicationEnabled = isSeriesTitleDeduplicationEnabled;
             VodSelections = vodSelections;
             SeriesSelections = seriesSelections;
         }
@@ -494,6 +508,8 @@ public class StrmExportService(
         public string? VodRoot { get; }
 
         public string? SeriesRoot { get; }
+
+        public bool IsSeriesTitleDeduplicationEnabled { get; }
 
         public IReadOnlyList<CategorySelection> VodSelections { get; }
 
@@ -522,6 +538,7 @@ public class StrmExportService(
                 publicServerUrl,
                 vodRoot,
                 seriesRoot,
+                configuration.IsSeriesStrmExportDeduplicationEnabled,
                 CaptureSelections(configuration.Vod),
                 CaptureSelections(configuration.Series));
         }

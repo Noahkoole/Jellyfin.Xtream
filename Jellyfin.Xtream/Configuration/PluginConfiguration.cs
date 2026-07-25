@@ -96,8 +96,8 @@ public class PluginConfiguration : BasePluginConfiguration
     public bool IsSeriesStrmExportEnabled { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the legacy series title-deduplication setting is enabled.
-    /// This setting is ignored by v0.9 because provider IDs keep same-title items distinct.
+    /// Gets or sets a value indicating whether duplicate normalized series titles are collapsed.
+    /// The preferred provider record is used in the channel and STRM export.
     /// </summary>
     public bool IsSeriesStrmExportDeduplicationEnabled { get; set; }
 

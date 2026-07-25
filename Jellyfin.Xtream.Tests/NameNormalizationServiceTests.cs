@@ -43,6 +43,23 @@ public class NameNormalizationServiceTests
     }
 
     [Fact]
+    public void SeriesTitleDeduplicationUsesCleanedTitleAndKeepsLowestProviderId()
+    {
+        NameNormalizationService service = CreateService();
+        Assert.Empty(service.UpdateRules("[Series] ^(?:NL|EN)\\s*-\\s* =>"));
+
+        List<Client.Models.Series> result = SeriesTitleDeduplicator.Deduplicate(
+        [
+            new() { SeriesId = 44, Name = "EN - Example Show" },
+            new() { SeriesId = 12, Name = "NL - Example Show" },
+            new() { SeriesId = 99, Name = "Different Show" },
+        ],
+        service.CreateSnapshot());
+
+        Assert.Equal([99, 12], result.Select(item => item.SeriesId));
+    }
+
+    [Fact]
     public void CharacterClassAtStartRemainsALegacyRegex()
     {
         NameNormalizationService service = CreateService();

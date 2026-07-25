@@ -15,6 +15,15 @@
             <span>Export selected series as STRM files</span>
           </label>
         </div>
+        <div class="checkboxContainer checkboxContainer-withDescription">
+          <label>
+            <input is="emby-checkbox" id="StrmExportDeduplicationEnabled" name="StrmExportDeduplicationEnabled" type="checkbox" />
+            <span>Hide duplicate series titles</span>
+          </label>
+          <div class="fieldDescription">
+            Keeps one deterministic provider record per cleaned title in the channel and skips duplicates before fetching episodes during STRM export. A successful export removes stale plugin-managed files for skipped series.
+          </div>
+        </div>
         <div class="inputContainer">
           <label class="inputLabel inputLabelUnfocused" for="StrmExportPath">Series STRM export folder</label>
           <input id="StrmExportPath" name="StrmExportPath" type="text" is="emby-input" />
