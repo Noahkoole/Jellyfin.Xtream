@@ -138,6 +138,11 @@ internal sealed class StrmExportManifestStore
     /// <summary>
     /// Reconciles manifest-owned entries and tagged legacy paths for identities returned in this run.
     /// </summary>
+    /// <param name="previous">Previously loaded ownership manifest.</param>
+    /// <param name="expectedEntries">Successfully written entries for this run.</param>
+    /// <param name="managedIdentityTags">Identity-bearing Xtream tags eligible for legacy-path cleanup.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The number of stale managed files deleted.</returns>
     public async Task<int> ReconcileAndCommitAsync(
         StrmExportManifestLoadResult previous,
         IReadOnlyCollection<StrmExportManifestEntry> expectedEntries,
