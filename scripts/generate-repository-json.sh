@@ -8,7 +8,7 @@ fi
 
 owner="$1"
 repo="$2"
-version="${3:-0.9.6.0}"
+version="${3:-0.9.7.0}"
 tag="v${version%".0"}"
 zip_name="jelly-xtream_${version}.zip"
 dist_zip="dist/${zip_name}"
