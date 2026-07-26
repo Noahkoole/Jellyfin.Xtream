@@ -72,7 +72,7 @@ Live TV is exposed through Jellyfin's native Live TV interface. It does not crea
 1. Select the categories, or individual videos within categories, you want to be available.
 1. Click `Save` on the bottom of the page.
 
-Optionally enable STRM export and choose a server-local Movies folder. v0.9 writes stable ID-based paths and an ownership manifest. Cleanup only removes files owned by that manifest; manually created and legacy STRM files are preserved.
+Optionally enable STRM export and choose a server-local Movies folder. The plugin writes stable ID-based paths and an ownership manifest. Cleanup only removes files owned by that manifest; manually created files are preserved.
 
 ### Series
 
@@ -91,8 +91,6 @@ Optionally enable STRM export and choose a server-local Shows folder. Episodes u
 ## Streaming security
 
 v0.9 returns signed Jellyfin proxy URLs, so Xtream usernames and passwords are no longer embedded in newly generated client-visible media paths. Normal playback grants expire after 15 minutes. Exported STRM files carry a separate durable resolver grant backed by a random, server-side key; the resolver issues a fresh short-lived playback grant. Both keys can be rotated independently, and bearer responses are marked `no-store`.
-
-Before the first v0.9 export, use the `v0.8 STRM credential cleanup` controls on the VOD and Series tabs. Preview every matched path, then quarantine the reviewed batch. The scanner recognizes both the original v0.8.4-v0.8.7 layouts and the ID-bearing v0.8.8-v0.8.12 layouts, including URLs containing old provider credentials. Quarantine never deletes a file: it moves matches into a hidden batch, changes the suffix to `.quarantined`, and writes a migration report. Because the earliest layouts did not contain provider IDs in filenames, review those candidates before applying them. Unrecognized and v0.9-managed files remain untouched. After verifying the new export, securely remove the reported quarantine batch because its retained file contents still contain the old credentials.
 
 If the Jellyfin server is behind a reverse proxy, set Jellyfin's Published Server URL or the plugin's optional `Public Jellyfin URL`. The plugin override takes precedence and is embedded in playback and STRM links; it must be an absolute HTTP(S) URL without credentials, query, or fragment.
 

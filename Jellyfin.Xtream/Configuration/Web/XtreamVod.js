@@ -43,7 +43,6 @@ export default function (view) {
         });
       return false;
     };
-    Xtream.setupLegacyStrmMigration(view, 'vod');
     const table = view.querySelector('#VodContent');
     Xtream.populateCategoriesTable(
       table,

@@ -43,7 +43,6 @@ export default function (view) {
         });
       return false;
     };
-    Xtream.setupLegacyStrmMigration(view, 'series');
     const table = view.querySelector('#SeriesContent');
     Xtream.populateCategoriesTable(
       table,

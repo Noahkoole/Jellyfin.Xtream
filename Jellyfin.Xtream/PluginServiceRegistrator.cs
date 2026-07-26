@@ -37,7 +37,6 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
         serviceCollection.AddSingleton<XtreamClient>();
         serviceCollection.AddSingleton<IXtreamClient>(serviceProvider =>
             new CachingXtreamClient(serviceProvider.GetRequiredService<XtreamClient>()));
-        serviceCollection.AddSingleton<LegacyStrmMigrationService>();
         serviceCollection.AddSingleton<NameNormalizationService>();
         serviceCollection.AddSingleton<StreamProxyTokenService>();
         serviceCollection.AddSingleton<StreamProxyUrlBuilder>();

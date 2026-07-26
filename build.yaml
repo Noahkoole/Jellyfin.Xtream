@@ -1,7 +1,7 @@
 ---
 name: "Jelly Xtream"
 guid: "5d774c35-8567-46d3-a950-9bb8227a0c5d"
-version: "0.9.4.0"
+version: "0.9.5.0"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
 overview: "Stream content from an Xtream-compatible server."
@@ -12,4 +12,4 @@ owner: "pietermn"
 artifacts:
   - "Jellyfin.Xtream.dll"
 changelog: >
-  Prevent duplicate scheduled STRM exports when multiple plugin versions are present by activating only the newest loaded assembly. Document the safe catalog-update procedure that preserves plugin configuration.
+  Remove the retired pre-v0.9 STRM migration and quarantine workflow from the dashboard, API, services, and tests.
