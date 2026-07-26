@@ -8,6 +8,14 @@
     "owner": "pietermn",
     "versions": [
       {
+        "changelog": "- Add separate regex editors for category, Live TV, movie, and series names.\\n- Automatically scope each editor to the matching content type.\\n- Preserve existing global and advanced scoped cleanup rules.",
+        "checksum": "7fead8b24cf088a31d4cd1b9367416d0",
+        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.6/jelly-xtream_0.9.6.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-07-26T00:28:34Z",
+        "version": "0.9.6.0"
+      },
+      {
         "changelog": "- Remove the retired pre-v0.9 STRM migration and quarantine workflow.\\n- Remove its dashboard controls, API endpoints, service implementation, and tests.\\n- Keep normal v0.9 STRM export and manifest reconciliation unchanged.",
         "checksum": "e8529928c96c49445fa0c7ecadb09ba9",
         "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.5/jelly-xtream_0.9.5.0.zip",
