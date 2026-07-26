@@ -8,6 +8,14 @@
     "owner": "pietermn",
     "versions": [
       {
+        "changelog": "- Restore the visible, enabled STRM export scheduled task.\\n- Remove the task-hiding safeguard that could leave side-by-side installations with no visible export action.\\n- Keep newest-assembly selection when configuration queues a STRM export.",
+        "checksum": "4e5d673deb3ee11b6d1cb4a14170caaa",
+        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.7/jelly-xtream_0.9.7.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-07-26T01:09:54Z",
+        "version": "0.9.7.0"
+      },
+      {
         "changelog": "- Add separate regex editors for category, Live TV, movie, and series names.\\n- Automatically scope each editor to the matching content type.\\n- Preserve existing global and advanced scoped cleanup rules.",
         "checksum": "7fead8b24cf088a31d4cd1b9367416d0",
         "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.6/jelly-xtream_0.9.6.0.zip",
