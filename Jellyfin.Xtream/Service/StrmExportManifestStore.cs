@@ -127,9 +127,21 @@ internal sealed class StrmExportManifestStore
     /// <param name="expectedEntries">Successfully written entries for this run.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The number of stale managed files deleted.</returns>
+    public Task<int> ReconcileAndCommitAsync(
+        StrmExportManifestLoadResult previous,
+        IReadOnlyCollection<StrmExportManifestEntry> expectedEntries,
+        CancellationToken cancellationToken)
+    {
+        return ReconcileAndCommitAsync(previous, expectedEntries, null, cancellationToken);
+    }
+
+    /// <summary>
+    /// Reconciles manifest-owned entries and tagged legacy paths for identities returned in this run.
+    /// </summary>
     public async Task<int> ReconcileAndCommitAsync(
         StrmExportManifestLoadResult previous,
         IReadOnlyCollection<StrmExportManifestEntry> expectedEntries,
+        IReadOnlyCollection<string>? managedIdentityTags,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -164,6 +176,31 @@ internal sealed class StrmExportManifestStore
             }
         }
 
+        // A title-cleanup rule can change an item's generated directory between runs. The old
+        // path is deliberately not in the manifest when an earlier, incomplete run could not
+        // safely commit it. The identity-bearing Xtream tag is therefore used as a narrowly
+        // scoped migration marker: only tagged STRM files for items returned in this successful
+        // run are eligible, and current expected paths are retained.
+        if (managedIdentityTags != null && managedIdentityTags.Count > 0)
+        {
+            HashSet<string> tags = new(managedIdentityTags, StringComparer.OrdinalIgnoreCase);
+            foreach (string candidate in Directory.EnumerateFiles(_rootPath, "*.strm", SearchOption.AllDirectories))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                string relativePath = Path.GetRelativePath(_rootPath, candidate);
+                if (!StrmExportPathPolicy.TryResolveManagedStrmPath(_rootPath, relativePath, out string? managedPath)
+                    || expectedPaths.Contains(StrmExportPathPolicy.NormalizeRelativePath(relativePath))
+                    || !tags.Any(tag => relativePath.Contains($"[{tag}]", StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
+                File.Delete(managedPath!);
+                DeleteEmptyParents(Path.GetDirectoryName(managedPath!));
+                deleted++;
+            }
+        }
+
         StrmExportManifest manifest = new()
         {
             SchemaVersion = ManifestSchemaVersion,
@@ -176,6 +213,32 @@ internal sealed class StrmExportManifestStore
         // is cancelled so the on-disk ownership record cannot be left partially advanced.
         await WriteTextAtomicallyAsync(Path.Combine(_rootPath, ManifestFileName), json, CancellationToken.None).ConfigureAwait(false);
         return deleted;
+    }
+
+    private void DeleteEmptyParents(string? directory)
+    {
+        while (!string.IsNullOrWhiteSpace(directory)
+               && !StrmExportPathPolicy.PortablePathComparer.Equals(directory, _rootPath))
+        {
+            try
+            {
+                if (Directory.GetFiles(directory).Length != 0 || Directory.GetDirectories(directory).Length != 0)
+                {
+                    return;
+                }
+
+                Directory.Delete(directory);
+                directory = Path.GetDirectoryName(directory);
+            }
+            catch (IOException)
+            {
+                return;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return;
+            }
+        }
     }
 
     /// <summary>

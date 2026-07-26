@@ -68,6 +68,34 @@ public sealed class StrmExportManifestStoreTests : IDisposable
     }
 
     [Fact]
+    public async Task SuccessfulRunRemovesLegacyTaggedPathsForReturnedIdentities()
+    {
+        string currentRelativePath = "Clean Title [xtream-vod-1]/Clean Title [xtream-vod-1].strm";
+        string legacyRelativePath = "NL - Clean Title [xtream-vod-1]/NL - Clean Title [xtream-vod-1].strm";
+        string duplicateRelativePath = "Duplicate Title [xtream-vod-2]/Duplicate Title [xtream-vod-2].strm";
+        string unrelatedRelativePath = "Other [xtream-vod-3]/Other [xtream-vod-3].strm";
+        await WriteFileAsync(StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, currentRelativePath), "current");
+        string legacyPath = StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, legacyRelativePath);
+        string duplicatePath = StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, duplicateRelativePath);
+        string unrelatedPath = StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, unrelatedRelativePath);
+        await WriteFileAsync(legacyPath, "legacy");
+        await WriteFileAsync(duplicatePath, "duplicate");
+        await WriteFileAsync(unrelatedPath, "unrelated");
+        StrmExportManifestStore store = new(_rootPath, "vod");
+
+        int deleted = await store.ReconcileAndCommitAsync(
+            await store.LoadAsync(CancellationToken.None),
+            [new("vod:1", currentRelativePath)],
+            ["xtream-vod-1", "xtream-vod-2"],
+            CancellationToken.None);
+
+        Assert.Equal(2, deleted);
+        Assert.False(File.Exists(legacyPath));
+        Assert.False(File.Exists(duplicatePath));
+        Assert.True(File.Exists(unrelatedPath));
+    }
+
+    [Fact]
     public async Task InvalidManifestCannotTriggerCleanupOrBeOverwritten()
     {
         string manifestPath = Path.Combine(_rootPath, StrmExportManifestStore.ManifestFileName);

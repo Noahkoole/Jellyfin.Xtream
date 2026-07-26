@@ -166,6 +166,9 @@ public class StrmExportService(
                 .First())
             .OrderBy(stream => stream.StreamId)
             .ToList();
+        string[] managedIdentityTags = streamsToExport
+            .Select(stream => $"xtream-vod-{stream.StreamId.ToString(CultureInfo.InvariantCulture)}")
+            .ToArray();
         if (snapshot.IsVodTitleDeduplicationEnabled)
         {
             int duplicateCount = streamsToExport.Count;
@@ -226,6 +229,7 @@ public class StrmExportService(
             manifestStore,
             previousManifest,
             expectedEntries,
+            managedIdentityTags,
             hasFailures,
             hasSuspiciousEmptyResult: snapshot.VodSelections.Count > 0 && expectedEntries.Count == 0,
             cancellationToken).ConfigureAwait(false);
@@ -291,6 +295,9 @@ public class StrmExportService(
             .Select(group => group.OrderBy(series => series.Name, StringComparer.Ordinal).First())
             .OrderBy(series => series.SeriesId)
             .ToList();
+        string[] managedIdentityTags = seriesToExport
+            .Select(series => $"xtream-series-{series.SeriesId.ToString(CultureInfo.InvariantCulture)}")
+            .ToArray();
         if (snapshot.IsSeriesTitleDeduplicationEnabled)
         {
             int duplicateCount = seriesToExport.Count;
@@ -343,6 +350,7 @@ public class StrmExportService(
             manifestStore,
             previousManifest,
             expectedEntries,
+            managedIdentityTags,
             hasFailures,
             hasSuspiciousEmptySeries || (snapshot.SeriesSelections.Count > 0 && expectedEntries.Count == 0),
             cancellationToken).ConfigureAwait(false);
@@ -439,6 +447,7 @@ public class StrmExportService(
         StrmExportManifestStore manifestStore,
         StrmExportManifestLoadResult previousManifest,
         List<StrmExportManifestEntry> expectedEntries,
+        IReadOnlyCollection<string> managedIdentityTags,
         bool hasFailures,
         bool hasSuspiciousEmptyResult,
         CancellationToken cancellationToken)
@@ -471,6 +480,7 @@ public class StrmExportService(
         int deleted = await manifestStore.ReconcileAndCommitAsync(
             previousManifest,
             expectedEntries,
+            managedIdentityTags,
             cancellationToken).ConfigureAwait(false);
         logger.LogInformation(
             "Reconciled {Count} {ExportKind} STRM entries and removed {DeletedCount} stale managed files.",

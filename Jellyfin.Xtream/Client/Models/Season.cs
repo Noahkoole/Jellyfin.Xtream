@@ -26,7 +26,7 @@ public class Season
     public DateTime? AirDate { get; set; }
 
     [JsonProperty("episode_count")]
-    public int EpisodeCount { get; set; }
+    public int? EpisodeCount { get; set; }
 
     [JsonProperty("id")]
     public int SeasonId { get; set; }
