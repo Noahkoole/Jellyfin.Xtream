@@ -220,6 +220,28 @@ internal sealed class StrmExportManifestStore
         return deleted;
     }
 
+    /// <summary>
+    /// Commits successfully written entries without deleting any prior output.
+    /// </summary>
+    /// <param name="expectedEntries">Successfully written entries for this run.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A task that represents the asynchronous commit operation.</returns>
+    public async Task CommitWithoutReconciliationAsync(
+        IReadOnlyCollection<StrmExportManifestEntry> expectedEntries,
+        CancellationToken cancellationToken)
+    {
+        List<StrmExportManifestEntry> canonicalEntries = ValidateExpectedEntries(expectedEntries);
+        StrmExportManifest manifest = new()
+        {
+            SchemaVersion = ManifestSchemaVersion,
+            Owner = ManifestOwner,
+            ExportKind = _exportKind,
+            Entries = [.. canonicalEntries],
+        };
+        string json = JsonSerializer.Serialize(manifest, _serializerOptions) + Environment.NewLine;
+        await WriteTextAtomicallyAsync(Path.Combine(_rootPath, ManifestFileName), json, cancellationToken).ConfigureAwait(false);
+    }
+
     private void DeleteEmptyParents(string? directory)
     {
         while (!string.IsNullOrWhiteSpace(directory)

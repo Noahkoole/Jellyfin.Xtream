@@ -457,6 +457,15 @@ public class StrmExportService(
             logger.LogWarning(
                 "Skipping stale {ExportKind} STRM reconciliation because one or more exports failed.",
                 exportKind);
+            if (expectedEntries.Count > 0)
+            {
+                await manifestStore.CommitWithoutReconciliationAsync(expectedEntries, cancellationToken).ConfigureAwait(false);
+                logger.LogInformation(
+                    "Committed {Count} successful {ExportKind} STRM entries without stale-file deletion.",
+                    expectedEntries.Count,
+                    exportKind);
+            }
+
             return;
         }
 
