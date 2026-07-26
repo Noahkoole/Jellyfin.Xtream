@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Jellyfin.Xtream.Configuration;
 using Jellyfin.Xtream.Service;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -6,6 +7,26 @@ namespace Jellyfin.Xtream.Tests;
 
 public class NameNormalizationServiceTests
 {
+    [Fact]
+    public void SeparateEditorRulesAreAutomaticallyScoped()
+    {
+        PluginConfiguration configuration = new()
+        {
+            CategoryNameCleanupRules = "^CAT\\s*=>",
+            LiveTvNameCleanupRules = "^LIVE\\s*=>",
+            VodNameCleanupRules = "^MOVIE\\s*=>",
+            SeriesNameCleanupRules = "^SHOW\\s*=>",
+        };
+        NameNormalizationService service = CreateService();
+
+        Assert.Empty(service.UpdateRules(configuration.GetEffectiveNameCleanupRules()));
+        Assert.Equal("Title", service.Normalize("CAT Title", NameScope.Category).Title);
+        Assert.Equal("Title", service.Normalize("LIVE Title", NameScope.LiveChannel).Title);
+        Assert.Equal("Title", service.Normalize("MOVIE Title", NameScope.Vod).Title);
+        Assert.Equal("Title", service.Normalize("SHOW Title", NameScope.Series).Title);
+        Assert.Equal("SHOW Title", service.Normalize("SHOW Title", NameScope.Vod).Title);
+    }
+
     [Fact]
     public void LegacyRuleAppliesToEveryScope()
     {

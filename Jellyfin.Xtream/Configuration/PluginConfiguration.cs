@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using MediaBrowser.Model.Plugins;
 
@@ -53,6 +54,26 @@ public class PluginConfiguration : BasePluginConfiguration
     /// Gets or sets regex replacement rules applied to displayed stream names.
     /// </summary>
     public string NameCleanupRules { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets regex replacement rules applied to category names.
+    /// </summary>
+    public string CategoryNameCleanupRules { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets regex replacement rules applied to Live TV channel names.
+    /// </summary>
+    public string LiveTvNameCleanupRules { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets regex replacement rules applied to movie names.
+    /// </summary>
+    public string VodNameCleanupRules { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets regex replacement rules applied to series, season, and episode names.
+    /// </summary>
+    public string SeriesNameCleanupRules { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether the Catch-up channel is visible.
@@ -125,5 +146,31 @@ public class PluginConfiguration : BasePluginConfiguration
     /// Gets or sets the channel override configuration for Live TV.
     /// </summary>
     public SerializableDictionary<int, ChannelOverrides> LiveTvOverrides { get; set; } = [];
+
+    /// <summary>
+    /// Combines global rules with the automatically scoped editor rules.
+    /// </summary>
+    /// <returns>The complete line-oriented normalization configuration.</returns>
+    public string GetEffectiveNameCleanupRules()
+    {
+        List<string> rules = [NameCleanupRules];
+        AddScopedRules(rules, CategoryNameCleanupRules, "Category");
+        AddScopedRules(rules, LiveTvNameCleanupRules, "LiveChannel");
+        AddScopedRules(rules, VodNameCleanupRules, "Vod");
+        AddScopedRules(rules, SeriesNameCleanupRules, "Series,Season,Episode");
+        return string.Join(Environment.NewLine, rules);
+    }
+
+    private static void AddScopedRules(List<string> destination, string rules, string scopes)
+    {
+        foreach (string rawLine in rules.Split('\n'))
+        {
+            string line = rawLine.Trim();
+            if (line.Length > 0 && line[0] != '#')
+            {
+                destination.Add($"[{scopes}] {line}");
+            }
+        }
+    }
 }
 #pragma warning restore CA2227

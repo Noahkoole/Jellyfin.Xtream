@@ -57,7 +57,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         XtreamClient.UpdateUserAgent();
 
         NameNormalizer = nameNormalizer;
-        _ = NameNormalizer.UpdateRules(Configuration.NameCleanupRules);
+        _ = NameNormalizer.UpdateRules(Configuration.GetEffectiveNameCleanupRules());
         StreamService = streamService;
         TaskService = taskService;
     }
@@ -141,7 +141,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         }
 
         base.UpdateConfiguration(configuration);
-        _ = NameNormalizer.UpdateRules(Configuration.NameCleanupRules);
+        _ = NameNormalizer.UpdateRules(Configuration.GetEffectiveNameCleanupRules());
 
         XtreamClient.UpdateUserAgent();
 

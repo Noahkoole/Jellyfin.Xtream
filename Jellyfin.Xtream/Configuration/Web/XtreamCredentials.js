@@ -16,6 +16,10 @@ export default function (view) {
       view.querySelector('#UserAgent').value = config.UserAgent;
       view.querySelector('#PublicServerUrl').value = config.PublicServerUrl || '';
       view.querySelector('#NameCleanupRules').value = config.NameCleanupRules || '';
+      view.querySelector('#CategoryNameCleanupRules').value = config.CategoryNameCleanupRules || '';
+      view.querySelector('#LiveTvNameCleanupRules').value = config.LiveTvNameCleanupRules || '';
+      view.querySelector('#VodNameCleanupRules').value = config.VodNameCleanupRules || '';
+      view.querySelector('#SeriesNameCleanupRules').value = config.SeriesNameCleanupRules || '';
       Dashboard.hideLoadingMsg();
     });
 
@@ -93,6 +97,10 @@ export default function (view) {
           config.UserAgent = view.querySelector('#UserAgent').value;
           config.PublicServerUrl = view.querySelector('#PublicServerUrl').value;
           config.NameCleanupRules = view.querySelector('#NameCleanupRules').value;
+          config.CategoryNameCleanupRules = view.querySelector('#CategoryNameCleanupRules').value;
+          config.LiveTvNameCleanupRules = view.querySelector('#LiveTvNameCleanupRules').value;
+          config.VodNameCleanupRules = view.querySelector('#VodNameCleanupRules').value;
+          config.SeriesNameCleanupRules = view.querySelector('#SeriesNameCleanupRules').value;
           return ApiClient.updatePluginConfiguration(pluginId, config);
         })
         .then((result) => {

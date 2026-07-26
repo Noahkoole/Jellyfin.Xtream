@@ -42,7 +42,7 @@ The following credentials should be set correctly in the `Credentials` plugin co
 
 ### Name cleanup rules
 
-Name cleanup rules rename items without changing their provider IDs. Enter one regular expression per line in the Credentials tab. Use `pattern => replacement`; omitting `=> replacement` removes each match. Rules without a scope remain compatible with older configurations and apply everywhere.
+Name cleanup rules rename items without changing their provider IDs. The Credentials tab has separate regex editors for categories, Live TV, movies, and series; each automatically applies to its matching item type. Enter one `pattern => replacement` per line; omitting `=> replacement` removes each match. The global/advanced editor remains compatible with older configurations and applies everywhere unless a scope is specified.
 
 Optional scopes make a rule apply only where intended:
 
