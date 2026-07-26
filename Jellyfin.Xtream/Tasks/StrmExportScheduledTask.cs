@@ -41,10 +41,10 @@ public class StrmExportScheduledTask(StrmExportService strmExportService) : ISch
     public string Category => "Xtream";
 
     /// <inheritdoc />
-    public bool IsHidden => false;
+    public bool IsHidden => !PluginAssemblyVersionPolicy.IsCurrentAssemblyPreferred();
 
     /// <inheritdoc />
-    public bool IsEnabled => true;
+    public bool IsEnabled => PluginAssemblyVersionPolicy.IsCurrentAssemblyPreferred();
 
     /// <inheritdoc />
     public bool IsLogged => true;

@@ -33,6 +33,8 @@ public sealed class TaskService(ITaskManager taskManager, ILogger<TaskService> l
             .Where(a =>
                 !a.IsDynamic &&
                 (a.FullName?.StartsWith($"{assembly},", StringComparison.InvariantCulture) ?? false))
+            .OrderByDescending(a => a.GetName().Version ?? new Version(0, 0))
+            .ThenBy(a => a.Location, StringComparer.Ordinal)
             .Select(a => a.GetType(fullName, throwOnError: false, ignoreCase: false))
             .FirstOrDefault(t => t is not null);
     }

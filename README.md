@@ -100,6 +100,8 @@ If the Jellyfin server is behind a reverse proxy, set Jellyfin's Published Serve
 
 After upgrading, Jellyfin must load one Jellyfin.Xtream version only. Do not leave manually copied `Jelly Xtream_0.8.*` plugin directories beside the installed v0.9 plugin: side-by-side assemblies create duplicate API routes and can cause cross-assembly `PluginConfiguration` cast failures. Preserve the configuration file, remove or disable obsolete plugin copies, then restart Jellyfin before saving the v0.9 configuration.
 
+For every update, install it through the Jellyfin plugin catalog and restart Jellyfin before using the plugin. Do not manually extract a release ZIP beside the catalog-managed installation. The plugin configuration is stored separately under its stable plugin GUID and is preserved across catalog updates; removing old plugin **binaries** does not remove credentials or selections. If the scheduled-task page ever shows duplicate Xtream entries after restarting, stop Jellyfin and remove only obsolete `Jelly Xtream_*`/`Jellyfin.Xtream_*` plugin directories, keeping the configuration file intact.
+
 Make sure you have correctly configured your [Jellyfin networking](https://jellyfin.org/docs/general/networking/):
 
 1. Open your admin dashboard and navigate to `Networking`.
