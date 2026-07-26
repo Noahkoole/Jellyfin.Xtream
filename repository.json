@@ -8,6 +8,14 @@
     "owner": "pietermn",
     "versions": [
       {
+        "changelog": "Restores normalized VOD STRM deduplication with 4K and Dutch preference, and exposes the VOD deduplication switch again.",
+        "checksum": "3479ef295535271bc98bde8e41f16ea6",
+        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.8/jelly-xtream_0.9.8.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-07-26T20:33:03Z",
+        "version": "0.9.8.0"
+      },
+      {
         "changelog": "- Restore the visible, enabled STRM export scheduled task.\\n- Remove the task-hiding safeguard that could leave side-by-side installations with no visible export action.\\n- Keep newest-assembly selection when configuration queues a STRM export.",
         "checksum": "4e5d673deb3ee11b6d1cb4a14170caaa",
         "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.7/jelly-xtream_0.9.7.0.zip",
