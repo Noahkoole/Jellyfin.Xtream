@@ -166,6 +166,18 @@ public class StrmExportService(
                 .First())
             .OrderBy(stream => stream.StreamId)
             .ToList();
+        if (snapshot.IsVodTitleDeduplicationEnabled)
+        {
+            int duplicateCount = streamsToExport.Count;
+            streamsToExport = VodTitleDeduplicator.Deduplicate(streamsToExport, namingSnapshot);
+            duplicateCount -= streamsToExport.Count;
+            if (duplicateCount > 0)
+            {
+                logger.LogInformation(
+                    "Skipped {Count} duplicate VOD items before STRM export.",
+                    duplicateCount);
+            }
+        }
 
         int streamsProcessed = 0;
         foreach (StreamInfo stream in streamsToExport)
@@ -485,6 +497,7 @@ public class StrmExportService(
             string publicServerUrl,
             string? vodRoot,
             string? seriesRoot,
+            bool isVodTitleDeduplicationEnabled,
             bool isSeriesTitleDeduplicationEnabled,
             IReadOnlyList<CategorySelection> vodSelections,
             IReadOnlyList<CategorySelection> seriesSelections)
@@ -494,6 +507,7 @@ public class StrmExportService(
             PublicServerUrl = publicServerUrl;
             VodRoot = vodRoot;
             SeriesRoot = seriesRoot;
+            IsVodTitleDeduplicationEnabled = isVodTitleDeduplicationEnabled;
             IsSeriesTitleDeduplicationEnabled = isSeriesTitleDeduplicationEnabled;
             VodSelections = vodSelections;
             SeriesSelections = seriesSelections;
@@ -508,6 +522,8 @@ public class StrmExportService(
         public string? VodRoot { get; }
 
         public string? SeriesRoot { get; }
+
+        public bool IsVodTitleDeduplicationEnabled { get; }
 
         public bool IsSeriesTitleDeduplicationEnabled { get; }
 
@@ -538,6 +554,7 @@ public class StrmExportService(
                 publicServerUrl,
                 vodRoot,
                 seriesRoot,
+                configuration.IsVodStrmExportDeduplicationEnabled,
                 configuration.IsSeriesStrmExportDeduplicationEnabled,
                 CaptureSelections(configuration.Vod),
                 CaptureSelections(configuration.Series));

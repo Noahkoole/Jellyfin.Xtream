@@ -101,10 +101,10 @@ public class PluginConfiguration : BasePluginConfiguration
     public bool IsVodStrmExportEnabled { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the legacy VOD title-deduplication setting is enabled.
-    /// This setting is ignored by v0.9 because provider IDs keep same-title items distinct.
+    /// Gets or sets a value indicating whether duplicate normalized VOD titles are collapsed.
+    /// The preferred provider record is used for STRM export.
     /// </summary>
-    public bool IsVodStrmExportDeduplicationEnabled { get; set; }
+    public bool IsVodStrmExportDeduplicationEnabled { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the folder where VOD STRM files are exported.

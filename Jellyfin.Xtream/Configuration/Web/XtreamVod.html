@@ -11,6 +11,15 @@
         </div>
         <div class="checkboxContainer checkboxContainer-withDescription">
           <label>
+            <input is="emby-checkbox" id="StrmExportDeduplicationEnabled" name="StrmExportDeduplicationEnabled" type="checkbox" />
+            <span>Skip duplicate normalized movie titles during STRM export</span>
+          </label>
+          <div class="fieldDescription">
+            When multiple selected movies clean to the same title, export the preferred stream and remove stale managed STRM files on the next successful export.
+          </div>
+        </div>
+        <div class="checkboxContainer checkboxContainer-withDescription">
+          <label>
             <input is="emby-checkbox" id="TmdbOverride" name="TmdbOverride" type="checkbox" />
             <span>Override metadata with TMDB</span>
           </label>

@@ -12,12 +12,14 @@ export default function (view) {
     const visible = view.querySelector("#Visible");
     const tmdbOverride = view.querySelector("#TmdbOverride");
     const strmExportEnabled = view.querySelector("#StrmExportEnabled");
+    const strmExportDeduplicationEnabled = view.querySelector("#StrmExportDeduplicationEnabled");
     const strmExportPath = view.querySelector("#StrmExportPath");
     let selectionData;
     getConfig.then((config) => {
       visible.checked = config.IsVodVisible;
       tmdbOverride.checked = config.IsTmdbVodOverride;
       strmExportEnabled.checked = config.IsVodStrmExportEnabled;
+      strmExportDeduplicationEnabled.checked = config.IsVodStrmExportDeduplicationEnabled ?? true;
       strmExportPath.value = config.VodStrmExportPath || '';
       selectionData = config.Vod;
     });
@@ -29,6 +31,7 @@ export default function (view) {
           config.IsVodVisible = visible.checked;
           config.IsTmdbVodOverride = tmdbOverride.checked;
           config.IsVodStrmExportEnabled = strmExportEnabled.checked;
+          config.IsVodStrmExportDeduplicationEnabled = strmExportDeduplicationEnabled.checked;
           config.VodStrmExportPath = strmExportPath.value;
           if (selectionData !== undefined) {
             config.Vod = selectionData;

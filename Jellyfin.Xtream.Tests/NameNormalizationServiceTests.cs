@@ -81,6 +81,36 @@ public class NameNormalizationServiceTests
     }
 
     [Fact]
+    public void VodTitleDeduplicationUsesCleanedTitleAndPrefers4KNl()
+    {
+        NameNormalizationService service = CreateService();
+        Assert.Empty(service.UpdateRules("[Vod] (?i)^\\s*(?:(?:NL|AMZ|4K)(?:[-\\s]+(?:NL|AMZ|4K))*\\s*-\\s*)+(.+?)\\s*$ => $1"));
+
+        List<Client.Models.StreamInfo> result = VodTitleDeduplicator.Deduplicate(
+        [
+            new() { StreamId = 44, Name = "AMZ - Example Movie" },
+            new() { StreamId = 12, Name = "NL - Example Movie" },
+            new() { StreamId = 99, Name = "4K-NL - Example Movie" },
+        ],
+        service.CreateSnapshot());
+
+        Assert.Equal([99], result.Select(item => item.StreamId));
+    }
+
+    [Theory]
+    [InlineData("DO - The Old Guard 2 (2025)", "The Old Guard 2 (2025)")]
+    [InlineData("AR-SUBS - Love in 39 Degrees (2024)", "Love in 39 Degrees (2024)")]
+    [InlineData("4M-AMZ - The Neverending Wedding (2025)", "The Neverending Wedding (2025)")]
+    [InlineData("BE-NL - Django", "Django")]
+    public void CompoundProviderPrefixRuleCleansObservedNames(string name, string expected)
+    {
+        NameNormalizationService service = CreateService();
+        Assert.Empty(service.UpdateRules("[Vod,Series] (?i)^\\s*(?:(?:EN|NL|NF|TOP|AMZ|UNV|D\\+|PRMT|VP|A\\+|MRVL|DWA|SC|AL|ËN|4K|4M|UHD|FHD|HD|SD|AR|SUBS|DO|CAM|BE|DSC\\+|P\\+|SKY|SHWT|NICK)(?:[-\\s]+(?:EN|NL|NF|TOP|AMZ|UNV|D\\+|PRMT|VP|A\\+|MRVL|DWA|SC|AL|ËN|4K|4M|UHD|FHD|HD|SD|AR|SUBS|DO|CAM|BE|DSC\\+|P\\+|SKY|SHWT|NICK))*\\s*-\\s*)+(.+?)\\s*$ => $1"));
+
+        Assert.Equal(expected, service.Normalize(name, NameScope.Vod).Title);
+    }
+
+    [Fact]
     public void CharacterClassAtStartRemainsALegacyRegex()
     {
         NameNormalizationService service = CreateService();
