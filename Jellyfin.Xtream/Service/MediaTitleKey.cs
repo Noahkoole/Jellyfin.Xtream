@@ -15,6 +15,8 @@ internal static partial class MediaTitleKey
     /// <summary>
     /// Removes provider-only suffixes and punctuation differences without removing a release year.
     /// </summary>
+    /// <param name="title">The already-normalized provider title.</param>
+    /// <returns>A case-insensitive canonical key suitable for title comparison.</returns>
     public static string Create(string? title)
     {
         string value = (title ?? string.Empty).Normalize(NormalizationForm.FormKD);

@@ -14,10 +14,10 @@ namespace Jellyfin.Xtream.Tasks;
 /// </summary>
 public class StrmDeduplicationScheduledTask(StrmExportService strmExportService) : IScheduledTask
 {
-    /// <inheritdoc />
+    /// <summary>Gets the task name shown in Jellyfin.</summary>
     public string Name => "Deduplicate Xtream STRM files";
 
-    /// <inheritdoc />
+    /// <summary>Gets the stable scheduled-task key.</summary>
     public string Key => "XtreamStrmDeduplication";
 
     /// <inheritdoc />
@@ -26,13 +26,13 @@ public class StrmDeduplicationScheduledTask(StrmExportService strmExportService)
     /// <inheritdoc />
     public string Category => "Xtream";
 
-    /// <inheritdoc />
+    /// <summary>Gets whether this task is hidden from the Jellyfin task list.</summary>
     public bool IsHidden => false;
 
-    /// <inheritdoc />
+    /// <summary>Gets whether this task can run.</summary>
     public bool IsEnabled => true;
 
-    /// <inheritdoc />
+    /// <summary>Gets whether Jellyfin records this task's execution.</summary>
     public bool IsLogged => true;
 
     /// <inheritdoc />

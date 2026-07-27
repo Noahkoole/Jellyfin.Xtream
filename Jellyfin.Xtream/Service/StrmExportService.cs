@@ -103,6 +103,9 @@ public class StrmExportService(
     /// the live provider catalogue, preserves the preferred source for each title, and safely
     /// reconciles only plugin-owned output.
     /// </remarks>
+    /// <param name="progress">The progress reporter.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task that completes after the rebuild and reconciliation finish.</returns>
     public Task DeduplicateAsync(IProgress<double> progress, CancellationToken cancellationToken)
     {
         return ExportAsync(progress, cancellationToken);
