@@ -26,13 +26,13 @@ public class StrmDeduplicationScheduledTask(StrmExportService strmExportService)
     /// <inheritdoc />
     public string Category => "Xtream";
 
-    /// <summary>Gets whether this task is hidden from the Jellyfin task list.</summary>
+    /// <summary>Gets a value indicating whether this task is hidden from the Jellyfin task list.</summary>
     public bool IsHidden => false;
 
-    /// <summary>Gets whether this task can run.</summary>
+    /// <summary>Gets a value indicating whether this task can run.</summary>
     public bool IsEnabled => true;
 
-    /// <summary>Gets whether Jellyfin records this task's execution.</summary>
+    /// <summary>Gets a value indicating whether Jellyfin records this task's execution.</summary>
     public bool IsLogged => true;
 
     /// <inheritdoc />
