@@ -40,6 +40,7 @@ public class StrmExportService(
     NameNormalizationService nameNormalizationService,
     StreamProxyUrlBuilder streamProxyUrlBuilder)
 {
+    private const int VodDetailLookupConcurrency = 4;
     private static readonly SemaphoreSlim _exportGate = new(1, 1);
 
     /// <summary>
@@ -185,10 +186,15 @@ public class StrmExportService(
         string[] managedIdentityTags = streamsToExport
             .Select(stream => $"xtream-vod-{stream.StreamId.ToString(CultureInfo.InvariantCulture)}")
             .ToArray();
+        VodDetailLoadResult details = await LoadVodDetailsAsync(
+            snapshot.ConnectionInfo,
+            streamsToExport,
+            cancellationToken).ConfigureAwait(false);
+        hasFailures |= details.HasFailures;
         if (snapshot.IsVodTitleDeduplicationEnabled)
         {
             int duplicateCount = streamsToExport.Count;
-            streamsToExport = VodTitleDeduplicator.Deduplicate(streamsToExport, namingSnapshot);
+            streamsToExport = VodTitleDeduplicator.Deduplicate(streamsToExport, namingSnapshot, details.Items);
             duplicateCount -= streamsToExport.Count;
             if (duplicateCount > 0)
             {
@@ -223,9 +229,18 @@ public class StrmExportService(
                     path,
                     url + Environment.NewLine,
                     cancellationToken).ConfigureAwait(false);
+                string nfoRelativePath = VodNfoWriter.GetRelativePath(relativePath);
+                string nfoPath = StrmExportPathPolicy.ResolveGeneratedPath(rootPath, nfoRelativePath);
+                await StrmExportManifestStore.WriteTextAtomicallyAsync(
+                    nfoPath,
+                    VodNfoWriter.Create(title, details.Items.GetValueOrDefault(stream.StreamId)) + Environment.NewLine,
+                    cancellationToken).ConfigureAwait(false);
                 expectedEntries.Add(new(
                     $"vod:{stream.StreamId.ToString(CultureInfo.InvariantCulture)}",
                     relativePath));
+                expectedEntries.Add(new(
+                    $"vod:{stream.StreamId.ToString(CultureInfo.InvariantCulture)}:nfo",
+                    nfoRelativePath));
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -458,6 +473,45 @@ public class StrmExportService(
         return namingSnapshot.Normalize(title, contentScope | NameScope.Filesystem).Title;
     }
 
+    private async Task<VodDetailLoadResult> LoadVodDetailsAsync(
+        ConnectionInfo connectionInfo,
+        IReadOnlyCollection<StreamInfo> streams,
+        CancellationToken cancellationToken)
+    {
+        Dictionary<int, VodInfo> details = [];
+        int failures = 0;
+        object detailsLock = new();
+        await Parallel.ForEachAsync(
+            streams,
+            new ParallelOptions
+            {
+                CancellationToken = cancellationToken,
+                MaxDegreeOfParallelism = VodDetailLookupConcurrency,
+            },
+            async (stream, token) =>
+            {
+                try
+                {
+                    VodStreamInfo response = await xtreamClient
+                        .GetVodInfoAsync(connectionInfo, stream.StreamId, token)
+                        .ConfigureAwait(false);
+                    if (response.Info is VodInfo detail)
+                    {
+                        lock (detailsLock)
+                        {
+                            details[stream.StreamId] = detail;
+                        }
+                    }
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    Interlocked.Increment(ref failures);
+                    logger.LogWarning(ex, "Unable to resolve stable metadata for VOD stream {StreamId}; it will not be title-deduplicated.", stream.StreamId);
+                }
+            }).ConfigureAwait(false);
+        return new(details, failures != 0);
+    }
+
     private async Task ReconcileIfSafeAsync(
         string exportKind,
         StrmExportManifestStore manifestStore,
@@ -523,6 +577,8 @@ public class StrmExportService(
     }
 
     private sealed record EpisodeExport(int SeasonNumber, Episode Episode);
+
+    private sealed record VodDetailLoadResult(IReadOnlyDictionary<int, VodInfo> Items, bool HasFailures);
 
     private sealed class ExportRunSnapshot
     {

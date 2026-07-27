@@ -167,9 +167,9 @@ internal static class StrmExportPathPolicy
     /// <returns>The absolute managed path.</returns>
     public static string ResolveGeneratedPath(string rootPath, string relativePath)
     {
-        if (!TryResolveManagedStrmPath(rootPath, relativePath, out string? fullPath))
+        if (!TryResolveManagedExportPath(rootPath, relativePath, out string? fullPath))
         {
-            throw new InvalidOperationException("Generated STRM path escaped the configured export root.");
+            throw new InvalidOperationException("Generated export path escaped the configured export root.");
         }
 
         return fullPath!;
@@ -183,6 +183,19 @@ internal static class StrmExportPathPolicy
     /// <param name="fullPath">Resolved absolute path.</param>
     /// <returns><see langword="true"/> if the path is a safe STRM file beneath the root.</returns>
     public static bool TryResolveManagedStrmPath(string rootPath, string relativePath, out string? fullPath)
+    {
+        return TryResolveManagedExportPath(rootPath, relativePath, out fullPath)
+            && string.Equals(Path.GetExtension(relativePath), ".strm", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Safely resolves a manifest-owned STRM or NFO path.
+    /// </summary>
+    /// <param name="rootPath">Normalized export root.</param>
+    /// <param name="relativePath">Manifest relative path.</param>
+    /// <param name="fullPath">Resolved absolute path.</param>
+    /// <returns><see langword="true"/> if the path is a safe managed file beneath the root.</returns>
+    public static bool TryResolveManagedExportPath(string rootPath, string relativePath, out string? fullPath)
     {
         fullPath = null;
         if (string.IsNullOrWhiteSpace(relativePath)
@@ -201,7 +214,9 @@ internal static class StrmExportPathPolicy
             return false;
         }
 
-        if (!string.Equals(Path.GetExtension(platformRelativePath), ".strm", StringComparison.OrdinalIgnoreCase))
+        string extension = Path.GetExtension(platformRelativePath);
+        if (!string.Equals(extension, ".strm", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(extension, ".nfo", StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }

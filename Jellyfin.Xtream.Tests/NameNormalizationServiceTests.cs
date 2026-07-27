@@ -92,7 +92,13 @@ public class NameNormalizationServiceTests
             new() { StreamId = 12, Name = "NL - Example Movie" },
             new() { StreamId = 99, Name = "4K-NL - Example Movie" },
         ],
-        service.CreateSnapshot());
+        service.CreateSnapshot(),
+        new Dictionary<int, Client.Models.VodInfo>
+        {
+            [44] = new() { TmdbId = 1 },
+            [12] = new() { TmdbId = 1 },
+            [99] = new() { TmdbId = 1 },
+        });
 
         Assert.Equal([99], result.Select(item => item.StreamId));
     }
@@ -108,7 +114,12 @@ public class NameNormalizationServiceTests
             new() { StreamId = 44, Name = "EN - Amélie (2001) (FR)" },
             new() { StreamId = 12, Name = "NL - Amelie (2001) [NL]" },
         ],
-        service.CreateSnapshot());
+        service.CreateSnapshot(),
+        new Dictionary<int, Client.Models.VodInfo>
+        {
+            [44] = new() { TmdbId = 10 },
+            [12] = new() { TmdbId = 10 },
+        });
         List<Client.Models.Series> series = SeriesTitleDeduplicator.Deduplicate(
         [
             new() { SeriesId = 44, Name = "EN - Example Show (US)" },
@@ -118,6 +129,26 @@ public class NameNormalizationServiceTests
 
         Assert.Equal([12], movies.Select(item => item.StreamId));
         Assert.Equal([12], series.Select(item => item.SeriesId));
+    }
+
+    [Fact]
+    public void VodDeduplicationKeepsDifferentTmdbIdentitiesEvenWhenTitlesAreSimilar()
+    {
+        NameNormalizationService service = CreateService();
+
+        List<Client.Models.StreamInfo> movies = VodTitleDeduplicator.Deduplicate(
+        [
+            new() { StreamId = 1, Name = "The Wave (2019)" },
+            new() { StreamId = 2, Name = "The 5th Wave (2016)" },
+        ],
+        service.CreateSnapshot(),
+        new Dictionary<int, Client.Models.VodInfo>
+        {
+            [1] = new() { TmdbId = 1, ReleaseDate = new DateTime(2019, 1, 1) },
+            [2] = new() { TmdbId = 2, ReleaseDate = new DateTime(2016, 1, 1) },
+        });
+
+        Assert.Equal([2, 1], movies.Select(item => item.StreamId));
     }
 
     [Theory]

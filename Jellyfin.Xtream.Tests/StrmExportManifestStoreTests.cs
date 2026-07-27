@@ -68,6 +68,36 @@ public sealed class StrmExportManifestStoreTests : IDisposable
     }
 
     [Fact]
+    public async Task LaterRunDeletesOwnedNfoSidecarsTogetherWithStaleStrmFiles()
+    {
+        string retainedStrm = "One [xtream-vod-1]/One [xtream-vod-1].strm";
+        string retainedNfo = "One [xtream-vod-1]/One [xtream-vod-1].nfo";
+        string staleStrm = "Two [xtream-vod-2]/Two [xtream-vod-2].strm";
+        string staleNfo = "Two [xtream-vod-2]/Two [xtream-vod-2].nfo";
+        StrmExportManifestStore store = new(_rootPath, "vod");
+        await WriteFileAsync(StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, retainedStrm), "one");
+        await WriteFileAsync(StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, retainedNfo), "one nfo");
+        string staleStrmPath = StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, staleStrm);
+        string staleNfoPath = StrmExportPathPolicy.ResolveGeneratedPath(_rootPath, staleNfo);
+        await WriteFileAsync(staleStrmPath, "two");
+        await WriteFileAsync(staleNfoPath, "two nfo");
+
+        await store.ReconcileAndCommitAsync(
+            await store.LoadAsync(CancellationToken.None),
+            [new("vod:1", retainedStrm), new("vod:1:nfo", retainedNfo), new("vod:2", staleStrm), new("vod:2:nfo", staleNfo)],
+            CancellationToken.None);
+
+        int deleted = await store.ReconcileAndCommitAsync(
+            await store.LoadAsync(CancellationToken.None),
+            [new("vod:1", retainedStrm), new("vod:1:nfo", retainedNfo)],
+            CancellationToken.None);
+
+        Assert.Equal(2, deleted);
+        Assert.False(File.Exists(staleStrmPath));
+        Assert.False(File.Exists(staleNfoPath));
+    }
+
+    [Fact]
     public async Task SuccessfulRunRemovesLegacyTaggedPathsForReturnedIdentities()
     {
         string currentRelativePath = "Clean Title [xtream-vod-1]/Clean Title [xtream-vod-1].strm";

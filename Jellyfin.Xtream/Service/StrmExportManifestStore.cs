@@ -99,7 +99,7 @@ internal sealed class StrmExportManifestStore
                     || string.IsNullOrWhiteSpace(entry.Identity)
                     || !identities.Add(entry.Identity)
                     || !relativePaths.Add(entry.RelativePath)
-                    || !StrmExportPathPolicy.TryResolveManagedStrmPath(_rootPath, entry.RelativePath, out _))
+                    || !StrmExportPathPolicy.TryResolveManagedExportPath(_rootPath, entry.RelativePath, out _))
                 {
                     return Invalid("The manifest contained a duplicate or unsafe entry.");
                 }
@@ -168,7 +168,7 @@ internal sealed class StrmExportManifestStore
                          .Where(entry => !expectedPaths.Contains(entry.RelativePath))
                          .OrderBy(entry => entry.RelativePath, StrmExportPathPolicy.PortablePathComparer))
             {
-                if (!StrmExportPathPolicy.TryResolveManagedStrmPath(_rootPath, staleEntry.RelativePath, out string? stalePath))
+                if (!StrmExportPathPolicy.TryResolveManagedExportPath(_rootPath, staleEntry.RelativePath, out string? stalePath))
                 {
                     throw new InvalidOperationException("A previously validated manifest path became unsafe.");
                 }
@@ -189,11 +189,13 @@ internal sealed class StrmExportManifestStore
         if (managedIdentityTags != null && managedIdentityTags.Count > 0)
         {
             HashSet<string> tags = new(managedIdentityTags, StringComparer.OrdinalIgnoreCase);
-            foreach (string candidate in Directory.EnumerateFiles(_rootPath, "*.strm", SearchOption.AllDirectories))
+            foreach (string candidate in Directory.EnumerateFiles(_rootPath, "*.*", SearchOption.AllDirectories)
+                         .Where(path => string.Equals(Path.GetExtension(path), ".strm", StringComparison.OrdinalIgnoreCase)
+                                        || string.Equals(Path.GetExtension(path), ".nfo", StringComparison.OrdinalIgnoreCase)))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 string relativePath = Path.GetRelativePath(_rootPath, candidate);
-                if (!StrmExportPathPolicy.TryResolveManagedStrmPath(_rootPath, relativePath, out string? managedPath)
+                if (!StrmExportPathPolicy.TryResolveManagedExportPath(_rootPath, relativePath, out string? managedPath)
                     || expectedPaths.Contains(StrmExportPathPolicy.NormalizeRelativePath(relativePath))
                     || !tags.Any(tag => relativePath.Contains($"[{tag}]", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -331,7 +333,7 @@ internal sealed class StrmExportManifestStore
             if (string.IsNullOrWhiteSpace(entry.Identity)
                 || !identities.Add(entry.Identity)
                 || !relativePaths.Add(entry.RelativePath)
-                || !StrmExportPathPolicy.TryResolveManagedStrmPath(_rootPath, entry.RelativePath, out _))
+                || !StrmExportPathPolicy.TryResolveManagedExportPath(_rootPath, entry.RelativePath, out _))
             {
                 throw new InvalidOperationException("The export produced a duplicate or unsafe manifest entry.");
             }

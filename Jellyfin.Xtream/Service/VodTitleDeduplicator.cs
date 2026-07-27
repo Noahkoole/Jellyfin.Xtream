@@ -17,16 +17,19 @@ internal static class VodTitleDeduplicator
     /// </summary>
     /// <param name="streams">The provider VOD records to consider.</param>
     /// <param name="names">The naming snapshot used for the current operation.</param>
+    /// <param name="details">Provider detail records keyed by stream identifier.</param>
     /// <returns>The deterministic preferred record for every distinct title.</returns>
     public static List<StreamInfo> Deduplicate(
         IEnumerable<StreamInfo> streams,
-        NameNormalizationSnapshot names)
+        NameNormalizationSnapshot names,
+        IReadOnlyDictionary<int, VodInfo> details)
     {
         ArgumentNullException.ThrowIfNull(streams);
         ArgumentNullException.ThrowIfNull(names);
+        ArgumentNullException.ThrowIfNull(details);
 
         return streams
-            .GroupBy(item => GetKey(item, names), StringComparer.OrdinalIgnoreCase)
+            .GroupBy(item => GetKey(item, names, details), StringComparer.OrdinalIgnoreCase)
             .Select(group => group
                 .OrderBy(item => GetPriority(item.Name).QualityRank)
                 .ThenBy(item => GetPriority(item.Name).LanguageRank)
@@ -38,11 +41,32 @@ internal static class VodTitleDeduplicator
             .ToList();
     }
 
-    private static string GetKey(StreamInfo stream, NameNormalizationSnapshot names)
+    private static string GetKey(
+        StreamInfo stream,
+        NameNormalizationSnapshot names,
+        IReadOnlyDictionary<int, VodInfo> details)
     {
         string title = names.Normalize(stream.Name, NameScope.Vod | NameScope.Filesystem).Title;
-        string key = MediaTitleKey.Create(title);
-        return string.IsNullOrWhiteSpace(key) ? $"\u0000{stream.StreamId}" : key;
+        if (details.TryGetValue(stream.StreamId, out VodInfo? detail))
+        {
+            if (detail.TmdbId is int tmdbId && tmdbId > 0)
+            {
+                return $"tmdb:{tmdbId}";
+            }
+
+            if (detail.ReleaseDate is DateTime releaseDate)
+            {
+                string titleKey = MediaTitleKey.Create(title);
+                if (!string.IsNullOrWhiteSpace(titleKey))
+                {
+                    return $"title-year:{titleKey}:{releaseDate.Year}";
+                }
+            }
+        }
+
+        // An unverified record must remain independent. Text-only grouping can merge distinct
+        // movies such as "The Wave" and "The 5th Wave" after an incorrect remote match.
+        return $"stream:{stream.StreamId}";
     }
 
     private static DuplicatePriority GetPriority(string name)
