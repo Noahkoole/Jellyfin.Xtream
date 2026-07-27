@@ -8,6 +8,14 @@
     "owner": "pietermn",
     "versions": [
       {
+        "changelog": "Improve STRM title deduplication and add an on-demand deduplication task.",
+        "checksum": "ece782603ed755be6afb0f707a03a595",
+        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.11/jelly-xtream_0.9.11.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-07-27T09:58:20Z",
+        "version": "0.9.11.0"
+      },
+      {
         "changelog": "Keep successful STRM output ownership in the manifest when a provider has partial failures. This allows later successful exports to reconcile stale paths without deleting output during an incomplete run.",
         "checksum": "9256d84d74950efd260d92256ba21add",
         "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.10/jelly-xtream_0.9.10.0.zip",
