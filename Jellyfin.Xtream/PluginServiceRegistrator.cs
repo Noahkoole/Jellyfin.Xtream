@@ -49,5 +49,6 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
         serviceCollection.AddSingleton<IPreRefreshProvider, XtreamVodProvider>();
         serviceCollection.AddSingleton<StrmExportService>();
         serviceCollection.AddSingleton<IScheduledTask, StrmExportScheduledTask>();
+        serviceCollection.AddSingleton<IScheduledTask, StrmDeduplicationScheduledTask>();
     }
 }

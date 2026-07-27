@@ -95,6 +95,19 @@ public class StrmExportService(
         }
     }
 
+    /// <summary>
+    /// Rebuilds the configured STRM exports using the title-deduplication rules.
+    /// </summary>
+    /// <remarks>
+    /// A rebuild is deliberately used instead of deleting files in isolation: it re-evaluates
+    /// the live provider catalogue, preserves the preferred source for each title, and safely
+    /// reconciles only plugin-owned output.
+    /// </remarks>
+    public Task DeduplicateAsync(IProgress<double> progress, CancellationToken cancellationToken)
+    {
+        return ExportAsync(progress, cancellationToken);
+    }
+
     private static void ValidateRoots(ExportRunSnapshot snapshot)
     {
         if (snapshot.VodRoot != null

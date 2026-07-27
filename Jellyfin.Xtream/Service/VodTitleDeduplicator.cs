@@ -41,7 +41,8 @@ internal static class VodTitleDeduplicator
     private static string GetKey(StreamInfo stream, NameNormalizationSnapshot names)
     {
         string title = names.Normalize(stream.Name, NameScope.Vod | NameScope.Filesystem).Title;
-        return string.IsNullOrWhiteSpace(title) ? $"\u0000{stream.StreamId}" : title;
+        string key = MediaTitleKey.Create(title);
+        return string.IsNullOrWhiteSpace(key) ? $"\u0000{stream.StreamId}" : key;
     }
 
     private static DuplicatePriority GetPriority(string name)

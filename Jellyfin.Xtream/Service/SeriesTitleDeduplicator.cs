@@ -44,8 +44,9 @@ internal static class SeriesTitleDeduplicator
     private static string GetKey(Series series, NameNormalizationSnapshot names)
     {
         string title = names.Normalize(series.Name, NameScope.Series).Title;
-        return string.IsNullOrWhiteSpace(title)
+        string key = MediaTitleKey.Create(title);
+        return string.IsNullOrWhiteSpace(key)
             ? $"\u0000{series.SeriesId}"
-            : title;
+            : key;
     }
 }

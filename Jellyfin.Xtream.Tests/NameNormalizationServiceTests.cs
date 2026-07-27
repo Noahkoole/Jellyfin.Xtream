@@ -97,6 +97,29 @@ public class NameNormalizationServiceTests
         Assert.Equal([99], result.Select(item => item.StreamId));
     }
 
+    [Fact]
+    public void DeduplicationIgnoresProviderCountrySuffixesAndPunctuation()
+    {
+        NameNormalizationService service = CreateService();
+        Assert.Empty(service.UpdateRules("[Vod,Series] (?i)^(?:NL|EN)\\s*-\\s* =>"));
+
+        List<Client.Models.StreamInfo> movies = VodTitleDeduplicator.Deduplicate(
+        [
+            new() { StreamId = 44, Name = "EN - Amélie (2001) (FR)" },
+            new() { StreamId = 12, Name = "NL - Amelie (2001) [NL]" },
+        ],
+        service.CreateSnapshot());
+        List<Client.Models.Series> series = SeriesTitleDeduplicator.Deduplicate(
+        [
+            new() { SeriesId = 44, Name = "EN - Example Show (US)" },
+            new() { SeriesId = 12, Name = "NL - Example Show [NL]" },
+        ],
+        service.CreateSnapshot());
+
+        Assert.Equal([12], movies.Select(item => item.StreamId));
+        Assert.Equal([12], series.Select(item => item.SeriesId));
+    }
+
     [Theory]
     [InlineData("DO - The Old Guard 2 (2025)", "The Old Guard 2 (2025)")]
     [InlineData("AR-SUBS - Love in 39 Degrees (2024)", "Love in 39 Degrees (2024)")]
