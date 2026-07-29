@@ -8,196 +8,20 @@
     "owner": "pietermn",
     "versions": [
       {
-        "changelog": "Use verified TMDB IDs and release years for conservative VOD STRM deduplication. Export managed movie NFO sidecars to prevent incorrect filename-based Jellyfin metadata matches.",
-        "checksum": "750cfd4ba7c02fedd98602eeb7f0b09c",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.12/jelly-xtream_0.9.12.0.zip",
+        "changelog": "",
+        "checksum": "266007d7d59245811c2c0db9d91a3390",
+        "sourceUrl": "https://github.com/Noahkoole/Jellyfin.Xtream/releases/download/v0.9.13/jelly-xtream_0.9.13.0.zip",
         "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-27T16:03:27Z",
-        "version": "0.9.12.0"
-      },
-      {
-        "changelog": "Improve STRM title deduplication and add an on-demand deduplication task.",
-        "checksum": "ece782603ed755be6afb0f707a03a595",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.11/jelly-xtream_0.9.11.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-27T09:58:20Z",
-        "version": "0.9.11.0"
-      },
-      {
-        "changelog": "Keep successful STRM output ownership in the manifest when a provider has partial failures. This allows later successful exports to reconcile stale paths without deleting output during an incomplete run.",
-        "checksum": "9256d84d74950efd260d92256ba21add",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.10/jelly-xtream_0.9.10.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-26T23:21:59Z",
-        "version": "0.9.10.0"
-      },
-      {
-        "changelog": "Fix STRM export reconciliation after title cleanup changes. Legacy Xtream-tagged paths for returned VOD and series identities are now removed after a successful export. Also accepts provider series records with a null `episode_count`.",
-        "checksum": "6db94de171038370971e06f474825019",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.9/jelly-xtream_0.9.9.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-26T22:30:09Z",
-        "version": "0.9.9.0"
-      },
-      {
-        "changelog": "Restores normalized VOD STRM deduplication with 4K and Dutch preference, and exposes the VOD deduplication switch again.",
-        "checksum": "3479ef295535271bc98bde8e41f16ea6",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.8/jelly-xtream_0.9.8.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-26T20:33:03Z",
-        "version": "0.9.8.0"
-      },
-      {
-        "changelog": "- Restore the visible, enabled STRM export scheduled task.\\n- Remove the task-hiding safeguard that could leave side-by-side installations with no visible export action.\\n- Keep newest-assembly selection when configuration queues a STRM export.",
-        "checksum": "4e5d673deb3ee11b6d1cb4a14170caaa",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.7/jelly-xtream_0.9.7.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-26T01:09:54Z",
-        "version": "0.9.7.0"
-      },
-      {
-        "changelog": "- Add separate regex editors for category, Live TV, movie, and series names.\\n- Automatically scope each editor to the matching content type.\\n- Preserve existing global and advanced scoped cleanup rules.",
-        "checksum": "7fead8b24cf088a31d4cd1b9367416d0",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.6/jelly-xtream_0.9.6.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-26T00:28:34Z",
-        "version": "0.9.6.0"
-      },
-      {
-        "changelog": "- Remove the retired pre-v0.9 STRM migration and quarantine workflow.\\n- Remove its dashboard controls, API endpoints, service implementation, and tests.\\n- Keep normal v0.9 STRM export and manifest reconciliation unchanged.",
-        "checksum": "e8529928c96c49445fa0c7ecadb09ba9",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.5/jelly-xtream_0.9.5.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-26T00:20:10Z",
-        "version": "0.9.5.0"
-      },
-      {
-        "changelog": "- Prevent duplicate scheduled STRM exports when multiple plugin versions are loaded.\\n- Always queue the STRM export task from the newest loaded plugin assembly.\\n- Document safe catalog updates that preserve the existing plugin configuration.",
-        "checksum": "dda5e88fe2a5730d220709d718b861d3",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.4/jelly-xtream_0.9.4.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-26T00:11:08Z",
-        "version": "0.9.4.0"
-      },
-      {
-        "changelog": "- Add opt-in series title deduplication for the Xtream channel and STRM export.\\n- Skip duplicate series before episode details are fetched during export.\\n- Reconcile stale plugin-managed STRM files after a successful deduplicated export.",
-        "checksum": "8180fc0a5b708f11b33429ced84dac26",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.3/jelly-xtream_0.9.3.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-25T23:51:11Z",
-        "version": "0.9.3.0"
-      },
-      {
-        "changelog": "Hotfix release for Live TV playback through providers that redirect stream URLs to public CDN hosts.\n\nChanges:\n- Allow Live TV stream/restream requests to follow public cross-origin provider redirects.\n- Keep Xtream API/metadata requests on strict same-origin redirect handling.\n- Reject redirects to private/local/metadata endpoints even for stream playback.\n- Bump plugin metadata to 0.9.2.0.\n\nVerification:\n- dotnet test Jellyfin.Xtream.sln -c Release: 142 passed.\n- Deployed build was verified on Jellyfin with Live TV playback-info returning HTTP 200 and no new origin errors.",
-        "checksum": "a0345ff2962849b2758c6b48d4dee282",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.2/jelly-xtream_0.9.2.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-11T11:04:24Z",
-        "version": "0.9.2.0"
-      },
-      {
-        "changelog": "**Full Changelog**: https://github.com/pietermn/Jellyfin.Xtream/compare/v0.9.0...v0.9.1",
-        "checksum": "e5026cecde2db3f12b4506e8d78543ab",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.1/jelly-xtream_0.9.1.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-11T09:40:15Z",
-        "version": "0.9.1.0"
-      },
-      {
-        "changelog": "**Full Changelog**: https://github.com/pietermn/Jellyfin.Xtream/compare/v0.8.12...v0.9.0",
-        "checksum": "0bff8bd3e8fc324e9fafda7e0117a876",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.9.0/jelly-xtream_0.9.0.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-11T09:13:42Z",
-        "version": "0.9.0.0"
-      },
-      {
-        "changelog": "Handle Xtream provider HTTP errors cleanly and deduplicate STRM exports by stable stream, series, episode IDs, and cleaned export titles.",
-        "checksum": "a56047a3375c4382ed6d27c4f2368363",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.12/jelly-xtream_0.8.12.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-10T11:09:02Z",
-        "version": "0.8.12.0"
-      },
-      {
-        "changelog": "Handle Xtream provider HTTP errors cleanly and deduplicate STRM exports by stable stream, series, and episode IDs.",
-        "checksum": "35d85f8130f6ae47815009136339f20d",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.11/jelly-xtream_0.8.11.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-09T06:15:44Z",
-        "version": "0.8.11.0"
-      },
-      {
-        "changelog": "Retry transient Xtream API request failures such as connection resets during STRM export.",
-        "checksum": "b61fd1b7449a1da78ab9828dacef1988",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.10/jelly-xtream_0.8.10.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-03T16:07:50Z",
-        "version": "0.8.10.0"
-      },
-      {
-        "changelog": "Improve scheduled STRM export progress reporting during VOD and series file writes.",
-        "checksum": "445848332d7d86d1b100b6a7c54786ca",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.9/jelly-xtream_0.8.9.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-03T15:54:37Z",
-        "version": "0.8.9.0"
-      },
-      {
-        "changelog": "Harden STRM export paths, skip unchanged writes, remove stale STRM files after clean exports, and keep exporting after item-level failures.",
-        "checksum": "157984002d4f60b844233bcd202c1916",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.8/jelly-xtream_0.8.8.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-03T15:43:55Z",
-        "version": "0.8.8.0"
-      },
-      {
-        "changelog": "Fix STRM export for Xtream providers that return series episodes as nested arrays.",
-        "checksum": "43e75a070c1644fef1186062ca3005a3",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.7/jelly-xtream_0.8.7.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-03T15:18:34Z",
-        "version": "0.8.7.0"
-      },
-      {
-        "changelog": "Fix STRM export for Xtream providers that return series episodes as a flat array.",
-        "checksum": "95aa1070f9b8beec8b8f166a8be470d4",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.6/jelly-xtream_0.8.6.0.zip",
-        "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-03T15:07:54Z",
-        "version": "0.8.6.0"
+        "timestamp": "2026-07-29T18:42:09Z",
+        "version": "0.9.13.0"
       },
       {
         "changelog": "",
-        "checksum": "e7f041f1fc483a9f149dbb513f894a86",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.5/jelly-xtream_0.8.4.0.zip",
+        "checksum": "6b3257d6564b6459b20242659600cfc1",
+        "sourceUrl": "https://github.com/Noahkoole/Jellyfin.Xtream/releases/download/v0.9.12/jelly-xtream_0.9.12.0.zip",
         "targetAbi": "10.11.0.0",
-        "timestamp": "2026-07-03T14:44:58Z",
-        "version": "0.8.4.0"
-      },
-      {
-        "changelog": "Adds optional STRM export for selected movies and series alongside existing channel functionality.",
-        "checksum": "",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.4/jellyfin-xtream_0.8.4.0.zip",
-        "targetAbi": "10.11.11.0",
-        "timestamp": "2026-06-12T17:16:36Z",
-        "version": "0.8.4.0"
-      },
-      {
-        "changelog": "Adds configurable regex cleanup rules for Live TV, movie, series, season, episode, and category names.",
-        "checksum": "",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.3/jellyfin-xtream_0.8.3.0.zip",
-        "targetAbi": "10.11.11.0",
-        "timestamp": "2026-06-12T17:08:39Z",
-        "version": "0.8.3.0"
-      },
-      {
-        "changelog": "Custom build with improved live restream buffering, safer live buffer synchronization, configured User-Agent on stream requests, and Jellyfin 10.11.11 dependency updates.",
-        "checksum": "",
-        "sourceUrl": "https://github.com/pietermn/Jellyfin.Xtream/releases/download/v0.8.2/jellyfin-xtream_0.8.2.0.zip",
-        "targetAbi": "10.11.11.0",
-        "timestamp": "2026-06-12T16:56:05Z",
-        "version": "0.8.2.0"
+        "timestamp": "2026-07-29T18:25:01Z",
+        "version": "0.9.12.0"
       }
     ]
   }
