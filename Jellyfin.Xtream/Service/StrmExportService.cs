@@ -397,11 +397,12 @@ public class StrmExportService(
         Action<double> progress,
         CancellationToken cancellationToken)
     {
-        string seriesTitle = NormalizeExportTitle(namingSnapshot, series.Name, NameScope.Series);
         SeriesStreamInfo seriesInfo = await xtreamClient.GetSeriesStreamsBySeriesAsync(
             snapshot.ConnectionInfo,
             series.SeriesId,
             cancellationToken).ConfigureAwait(false);
+        string rawSeriesTitle = SeriesTitleResolver.Resolve(series, seriesInfo);
+        string seriesTitle = NormalizeExportTitle(namingSnapshot, rawSeriesTitle, NameScope.Series);
         List<EpisodeExport> episodesToExport = seriesInfo.Episodes
             .SelectMany(season => season.Value.Select(episode => new EpisodeExport(season.Key, episode)))
             .GroupBy(episode => episode.Episode.EpisodeId)
