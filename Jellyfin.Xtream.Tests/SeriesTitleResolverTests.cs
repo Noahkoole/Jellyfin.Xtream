@@ -53,6 +53,47 @@ public class SeriesTitleResolverTests
         Assert.Equal(string.Empty, SeriesTitleResolver.Resolve(series, info));
     }
 
+    [Fact]
+    public void ResolveSkipsUnknownPlaceholderAndDerivesFromEpisodes()
+    {
+        Series series = new() { SeriesId = 26332, Name = "Unknown" };
+        SeriesStreamInfo info = new()
+        {
+            Info = new SeriesInfo { Name = "Unknown" },
+            Episodes = new Dictionary<int, ICollection<Episode>>
+            {
+                [1] = new List<Episode>
+                {
+                    new() { EpisodeId = 1, Title = "9-1-1 (2018) - S01E01 - Pilot" },
+                    new() { EpisodeId = 2, Title = "9-1-1 (2018) - S01E02 - Let Go" },
+                },
+            },
+        };
+
+        Assert.Equal("9-1-1 (2018)", SeriesTitleResolver.Resolve(series, info));
+    }
+
+    [Fact]
+    public void ResolveKeepsPlaceholderWhenNoDerivationPossible()
+    {
+        Series series = new() { SeriesId = 1, Name = "Unknown" };
+        SeriesStreamInfo info = new() { Info = new SeriesInfo { Name = "Unknown" } };
+
+        Assert.Equal("Unknown", SeriesTitleResolver.Resolve(series, info));
+    }
+
+    [Theory]
+    [InlineData("Breaking Bad", true)]
+    [InlineData("Unknown", false)]
+    [InlineData("  unknown  ", false)]
+    [InlineData("N/A", false)]
+    [InlineData("", false)]
+    [InlineData("   ", false)]
+    public void IsMeaningfulTitleClassifiesPlaceholders(string title, bool expected)
+    {
+        Assert.Equal(expected, SeriesTitleResolver.IsMeaningfulTitle(title));
+    }
+
     [Theory]
     [InlineData("9-1-1 (2018) - S01E01 - Pilot", "9-1-1 (2018)")]
     [InlineData("The Office (US) S02E05 Halloween", "The Office (US)")]

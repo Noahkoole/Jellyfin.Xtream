@@ -35,13 +35,27 @@ internal static class SeriesTitleResolver
         RegexOptions.CultureInvariant | RegexOptions.IgnoreCase,
         TimeSpan.FromMilliseconds(100));
 
+    // Provider "names" that are really placeholders. When the series listing
+    // (or detailed info) carries one of these, a better title is derived from
+    // the episode titles instead.
+    private static readonly HashSet<string> _placeholderTitles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Unknown",
+        "N/A",
+        "null",
+        "undefined",
+        "No name",
+    };
+
     /// <summary>
     /// Resolves the best available raw (un-normalized) series title.
     /// </summary>
     /// <remarks>
     /// Priority: the series listing name, then the detailed series-info name, then a
-    /// title derived from the common prefix of the episode titles. The caller is
-    /// responsible for applying name-cleanup and filesystem normalization to the result.
+    /// title derived from the common prefix of the episode titles. A listing/info name
+    /// that is empty or a known placeholder (for example "Unknown") is skipped in favour
+    /// of the derived title. The caller is responsible for applying name-cleanup and
+    /// filesystem normalization to the result.
     /// </remarks>
     /// <param name="series">The series record from the series listing.</param>
     /// <param name="seriesInfo">The detailed series stream information.</param>
@@ -54,19 +68,36 @@ internal static class SeriesTitleResolver
         ArgumentNullException.ThrowIfNull(series);
         ArgumentNullException.ThrowIfNull(seriesInfo);
 
-        if (!string.IsNullOrWhiteSpace(series.Name))
+        if (IsMeaningfulTitle(series.Name))
         {
             return series.Name.Trim();
         }
 
-        if (!string.IsNullOrWhiteSpace(seriesInfo.Info.Name))
+        if (IsMeaningfulTitle(seriesInfo.Info.Name))
         {
             return seriesInfo.Info.Name.Trim();
         }
 
         string? derived = DeriveFromEpisodeTitles(
             seriesInfo.Episodes.Values.SelectMany(episodes => episodes).Select(episode => episode.Title));
-        return derived ?? string.Empty;
+        if (derived is not null)
+        {
+            return derived;
+        }
+
+        // Nothing better is available: preserve whatever the provider sent so the
+        // path policy can apply its own placeholder.
+        return series.Name?.Trim() ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Determines whether a provider-supplied title is usable rather than empty or a placeholder.
+    /// </summary>
+    /// <param name="title">The provider title.</param>
+    /// <returns><see langword="true"/> when the title is meaningful.</returns>
+    internal static bool IsMeaningfulTitle(string? title)
+    {
+        return !string.IsNullOrWhiteSpace(title) && !_placeholderTitles.Contains(title.Trim());
     }
 
     /// <summary>
