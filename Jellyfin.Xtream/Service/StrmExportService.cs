@@ -471,7 +471,18 @@ public class StrmExportService(
         NameScope contentScope)
     {
         ArgumentNullException.ThrowIfNull(namingSnapshot);
-        return namingSnapshot.Normalize(title, contentScope | NameScope.Filesystem).Title;
+        string normalized = namingSnapshot.Normalize(title, contentScope | NameScope.Filesystem).Title;
+
+        // A misconfigured cleanup rule (for example ".*NL.*" with no replacement) can
+        // reduce a real provider name to nothing, which the path policy would then export
+        // as a literal "Unknown" folder. Never let normalization erase a non-empty name:
+        // keep the original title so the export stays identifiable.
+        if (string.IsNullOrWhiteSpace(normalized) && !string.IsNullOrWhiteSpace(title))
+        {
+            return title.Trim();
+        }
+
+        return normalized;
     }
 
     private async Task<VodDetailLoadResult> LoadVodDetailsAsync(

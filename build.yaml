@@ -1,7 +1,7 @@
 ---
 name: "Jelly Xtream"
 guid: "5d774c35-8567-46d3-a950-9bb8227a0c5d"
-version: "0.9.14.0"
+version: "0.9.15.0"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
 overview: "Stream content from an Xtream-compatible server."
@@ -12,4 +12,4 @@ owner: "Noahkoole"
 artifacts:
   - "Jellyfin.Xtream.dll"
 changelog: >
-  Fix series STRM exports being named "Unknown". The series title now ignores empty or placeholder provider names (such as a literal "Unknown") and falls back to the detailed series-info name and, failing that, a title derived from the episode titles.
+  Prevent name cleanup rules from erasing a title. When a cleanup rule reduces a non-empty provider name to nothing (for example a greedy ".*NL.*" rule), the original title is kept instead of exporting an "Unknown" folder. Also ignore empty or placeholder provider series names, falling back to the series-info name or a title derived from the episode titles.
