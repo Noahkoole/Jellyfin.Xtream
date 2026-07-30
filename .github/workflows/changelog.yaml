@@ -15,6 +15,6 @@ jobs:
   call:
     uses: jellyfin/jellyfin-meta-plugins/.github/workflows/changelog.yaml@91aa56610cd3321f8897bbe2657c1743b3df3436
     with:
-      repository-name: pietermn/Jellyfin.Xtream
+      repository-name: Noahkoole/Jellyfin.Xtream
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
